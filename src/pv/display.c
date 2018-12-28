@@ -615,11 +615,13 @@ static char *pv__format(pvstate_t state,
 		 */
 		if (elapsed_sec > (long double) 360000000.0L)
 			elapsed_sec = (long double) 360000000.0L;
-
+/*
 		sprintf(state->str_timer, "%ld:%02ld:%02ld",
 			((long) elapsed_sec) / 3600,
 			(((long) elapsed_sec) / 60) % 60,
 			((long) elapsed_sec) % 60);
+*/
+		sprintf(state->str_timer, "time=%ld", (long) elapsed_sec); ///===>
 	}
 
 	/* Rate - set up the display string. */
@@ -630,11 +632,16 @@ static char *pv__format(pvstate_t state,
 	}
 
 	/* Average rate - set up the display string. */
+/*
 	if ((state->components_used & PV_DISPLAY_AVERAGERATE) != 0) {
 		pv__sizestr(state->str_average_rate,
 			    sizeof(state->str_average_rate), "[%s]",
 			    average_rate, _("/s"), _("B/s"),
 			    state->linemode ? 0 : 1);
+	}
+*/
+	if ((state->components_used & PV_DISPLAY_AVERAGERATE) != 0) {
+		sprintf(state->str_average_rate, "bitrate=%.0fkbits/s",  8.0 * ((float) average_rate)/1024.0); ///===>
 	}
 
 	/* Last output bytes - set up the display string. */
@@ -958,7 +965,7 @@ void pv_display(pvstate_t state, long double esec, long long sl,
 		state->display_visible = 1;
 	} else {
 		write(STDERR_FILENO, display, strlen(display));
-		write(STDERR_FILENO, "\r", 1);
+		write(STDERR_FILENO, "\n", 1); ///===>
 		state->display_visible = 1;
 	}
 
